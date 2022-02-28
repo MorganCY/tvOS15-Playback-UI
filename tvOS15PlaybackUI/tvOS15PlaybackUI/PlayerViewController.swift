@@ -24,12 +24,19 @@ class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDeleg
     var currentItemErrorObservation: NSKeyValueObservation?
 
     var isPlaybackActive = false
+    var isFavorited = false
+
+    let heartImage = UIImage(systemName: "heart")
+    let heartFillImage = UIImage(systemName: "heart.fill")
+    let loopImage = UIImage(systemName: "infinity")
+    let gearImage = UIImage(systemName: "gearshape")
 
     // MARK: - Content Tab
     func loadAndPlay(url: URL, title: String, description: String, rating: String) {
         loadNewPlayerViewController()
         setupContentTabInfoButton()
         setupChaptersTab()
+        setupTransportBarControls()
 
         let playerItem = AVPlayerItem(url: url)
         // 定義 Info Tab 內容
@@ -67,6 +74,34 @@ class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDeleg
         playerViewController?.customInfoViewControllers = [
             chaptersTabViewController
         ]
+    }
+
+    // MARK: - Transport Bar
+    // 新增客製化 Transport Bar Controls
+    func setupTransportBarControls() {
+        let stateImage = isFavorited ? heartFillImage : heartImage
+        let favoriteAction = UIAction(title: "Favorites", image: stateImage) { [weak self] action in
+            guard let self = self else { return }
+            self.isFavorited.toggle()
+            action.image = self.isFavorited ? self.heartFillImage : self.heartImage
+        }
+
+        let loopAction = UIAction(title: "Loop", image: loopImage, state: .off) { action in
+            action.state = (action.state == .off) ? .on : .off
+        }
+
+        let speedActions = ["0.5x": Float(0.5), "1x": Float(1.0), "2x": Float(2.0)].map { title, value in
+            UIAction(title: title, state: player?.rate == value ? .on : .off) { [weak self] action in
+                guard let player = self?.player,
+                      let value = value else { return }
+                player.rate = value
+                action.state = .on
+            }
+        }
+        let submenu = UIMenu(title: "Speed", options: [.displayInline, .singleSelection], children: speedActions)
+        let menu = UIMenu(title: "Preferences", image: gearImage, children: [loopAction, submenu])
+
+        playerViewController?.transportBarCustomMenuItems = [favoriteAction, menu]
     }
 
     // MARK: - Configuration
