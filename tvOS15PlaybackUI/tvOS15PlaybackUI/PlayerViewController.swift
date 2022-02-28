@@ -5,17 +5,18 @@
 //  Created by Zheng-Yuan Yu on 2022/2/28.
 //
 
-import UIKit
-import AVKit
-
 /*
 Modified codes from Apple's sample code: https://developer.apple.com/documentation/avkit/working_with_overlays_and_parental_controls_in_tvos
  */
+
+import UIKit
+import AVKit
 
 @available (tvOS 15, *)
 class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDelegate {
 
     @objc dynamic var playerViewController: AVPlayerViewController?
+    let chaptersTabViewController = ChaptersTabViewController(nibName: "ChaptersTab", bundle: nil)
 
     var player: AVQueuePlayer?
     @objc dynamic var pendingPlayerItem: AVPlayerItem?
@@ -28,6 +29,7 @@ class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDeleg
     func loadAndPlay(url: URL, title: String, description: String, rating: String) {
         loadNewPlayerViewController()
         setupContentTabInfoButton()
+        setupChaptersTab()
 
         let playerItem = AVPlayerItem(url: url)
         // 定義 Info Tab 內容
@@ -59,6 +61,15 @@ class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDeleg
         playerViewController?.infoViewActions.append(button2) // 這個按鈕不會出現在UI上
     }
 
+    // 新增客製化 Content Tab - Chapters
+    func setupChaptersTab() {
+        chaptersTabViewController.title = "Chapters"
+        playerViewController?.customInfoViewControllers = [
+            chaptersTabViewController
+        ]
+    }
+
+    // MARK: - Configuration
     func commonInit() {
 
         playerItemStatusObservation = observe(\.pendingPlayerItem?.status) { (object, change) in
@@ -80,7 +91,6 @@ class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDeleg
             }
         }
     }
-
     init() {
         super.init(nibName: nil, bundle: nil)
         commonInit()
