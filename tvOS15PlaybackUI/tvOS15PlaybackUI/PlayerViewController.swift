@@ -37,6 +37,7 @@ class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDeleg
         setupContentTabInfoButton()
         setupChaptersTab()
         setupTransportBarControls()
+        addTimeObserverForSkipAciton()
 
         let playerItem = AVPlayerItem(url: url)
         // 定義 Info Tab 內容
@@ -102,6 +103,27 @@ class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDeleg
         let menu = UIMenu(title: "Preferences", image: gearImage, children: [loopAction, submenu])
 
         playerViewController?.transportBarCustomMenuItems = [favoriteAction, menu]
+    }
+
+    // MARK: - Contextual Action
+    // Skip按鈕出現的時間區段
+    let skipRange = CMTimeRange(start: CMTime(seconds: 10, preferredTimescale: 1), end: CMTime(seconds: 20, preferredTimescale: 1))
+
+    // 定義 Skip action
+    private lazy var skipAction = UIAction(title: "跳過") { [weak self] _ in
+        guard let player = self?.player else { return }
+        let currentTime = player.currentTime().seconds
+        let fastForwardedTime = CMTime(seconds: currentTime + 10, preferredTimescale: 1)
+        player.seek(to: fastForwardedTime)
+    }
+
+    func addTimeObserverForSkipAciton() {
+        let interval = CMTime(value: 1, timescale: 1)
+        player?.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
+            guard let self = self else { return }
+            let actions = self.skipRange.containsTime(time) ? [self.skipAction] : []
+            self.playerViewController?.contextualActions = actions
+        }
     }
 
     // MARK: - Configuration
