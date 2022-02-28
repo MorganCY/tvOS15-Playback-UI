@@ -12,6 +12,7 @@
 		5C91B7FA27CCFFD4004C0F3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5C91B7F927CCFFD4004C0F3B /* Assets.xcassets */; };
 		5C91B7FD27CCFFD4004C0F3B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C91B7FB27CCFFD4004C0F3B /* LaunchScreen.storyboard */; };
 		5C91B80427CD016B004C0F3B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5C91B80327CD016B004C0F3B /* Main.storyboard */; };
+		5C91B80627CD0CF5004C0F3B /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C91B80527CD0CF5004C0F3B /* PlayerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		5C91B7F927CCFFD4004C0F3B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5C91B7FC27CCFFD4004C0F3B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5C91B80327CD016B004C0F3B /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		5C91B80527CD0CF5004C0F3B /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +57,7 @@
 			children = (
 				5C91B7F227CCFFD2004C0F3B /* AppDelegate.swift */,
 				5C91B7F427CCFFD2004C0F3B /* MenuViewController.swift */,
+				5C91B80527CD0CF5004C0F3B /* PlayerViewController.swift */,
 				5C91B80327CD016B004C0F3B /* Main.storyboard */,
 				5C91B7F927CCFFD4004C0F3B /* Assets.xcassets */,
 				5C91B7FB27CCFFD4004C0F3B /* LaunchScreen.storyboard */,
@@ -135,6 +138,7 @@
 			files = (
 				5C91B7F527CCFFD2004C0F3B /* MenuViewController.swift in Sources */,
 				5C91B7F327CCFFD2004C0F3B /* AppDelegate.swift in Sources */,
+				5C91B80627CD0CF5004C0F3B /* PlayerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -23,6 +23,9 @@
                             <tvPosterView contentMode="scaleAspectFit" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" image="logo" title="示範影片" subtitle="" translatesAutoresizingMaskIntoConstraints="NO" id="1Fx-od-vnW">
                                 <rect key="frame" x="671" y="322" width="578" height="436"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="actionWithPosterView:" destination="BYZ-38-t0r" eventType="primaryActionTriggered" id="sdw-Wq-rWa"/>
+                                </connections>
                             </tvPosterView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="wu6-TO-1qx"/>
