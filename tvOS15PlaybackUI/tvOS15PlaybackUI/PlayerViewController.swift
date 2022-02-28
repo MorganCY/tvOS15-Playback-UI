@@ -12,6 +12,7 @@ import AVKit
 Modified codes from Apple's sample code: https://developer.apple.com/documentation/avkit/working_with_overlays_and_parental_controls_in_tvos
  */
 
+@available (tvOS 15, *)
 class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDelegate {
 
     @objc dynamic var playerViewController: AVPlayerViewController?
@@ -22,6 +23,41 @@ class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDeleg
     var currentItemErrorObservation: NSKeyValueObservation?
 
     var isPlaybackActive = false
+
+    // MARK: - Content Tab
+    func loadAndPlay(url: URL, title: String, description: String, rating: String) {
+        loadNewPlayerViewController()
+        setupContentTabInfoButton()
+
+        let playerItem = AVPlayerItem(url: url)
+        // 定義 Info Tab 內容
+        playerItem.externalMetadata = [
+            metadataItemForMediaContentRating(rating),
+            createMetadataItem(AVMetadataIdentifier.commonIdentifierTitle, value: title),
+            createMetadataItem(.commonIdentifierDescription, value: description),
+            createMetadataItem(.commonIdentifierArtwork, value: UIImage(named: "logo")?.pngData() as Any),
+            createMetadataItem(.commonIdentifierArtist, value: "artist"),
+            createMetadataItem(.quickTimeMetadataGenre, value: "輸入Genre")
+        ]
+        self.pendingPlayerItem = playerItem
+        player?.replaceCurrentItem(with: playerItem)
+        if playerViewController != nil && !isPlaybackActive {
+            isPlaybackActive = true
+        }
+    }
+
+    // 在 Info Tab 新增客製化按鈕
+    func setupContentTabInfoButton() {
+        let glasses = UIImage(systemName: "eyeglasses")
+        let button1 = UIAction(title: "客製化按鈕", image: glasses) { action in
+            print("按按鈕")
+        }
+        let button2 = UIAction(title: "客製化按鈕", image: glasses) { action in
+            print("按按鈕")
+        }
+        playerViewController?.infoViewActions.append(button1)
+        playerViewController?.infoViewActions.append(button2) // 這個按鈕不會出現在UI上
+    }
 
     func commonInit() {
 
@@ -57,7 +93,6 @@ class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDeleg
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         view.backgroundColor = .black
         if let playerViewController = playerViewController {
             view.addSubview(playerViewController.view)
@@ -72,18 +107,6 @@ class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDeleg
         super.viewWillLayoutSubviews()
     }
 
-    private func metadataItem(_ identifier: AVMetadataIdentifier, stringValue value: String) -> AVMutableMetadataItem {
-        let metadataItem = AVMutableMetadataItem()
-        metadataItem.value = value as NSString
-        metadataItem.extendedLanguageTag = "und"
-        metadataItem.identifier = identifier
-        return metadataItem
-    }
-
-    private func metadataItemForMediaContentRating(_ rating: String) -> AVMetadataItem {
-        return metadataItem(.iTunesMetadataContentRating, stringValue: rating)
-    }
-
     private func loadNewPlayerViewController() {
         let newPlayerViewController = AVPlayerViewController()
         newPlayerViewController.delegate = self
@@ -96,21 +119,6 @@ class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDeleg
         addChild(newPlayerViewController)
         if isViewLoaded {
             view.addSubview(newPlayerViewController.view)
-        }
-    }
-
-    func loadAndPlay(url: URL, title: String, description: String, rating: String) {
-        loadNewPlayerViewController()
-        let playerItem = AVPlayerItem(url: url)
-        playerItem.externalMetadata = [
-            metadataItemForMediaContentRating(rating),
-            metadataItem(AVMetadataIdentifier.commonIdentifierTitle, stringValue: title),
-            metadataItem(.commonIdentifierDescription, stringValue: description)
-        ]
-        self.pendingPlayerItem = playerItem
-        player?.replaceCurrentItem(with: playerItem)
-        if playerViewController != nil && !isPlaybackActive {
-            isPlaybackActive = true
         }
     }
 
@@ -136,6 +144,20 @@ class VideoPlaybackViewController: UIViewController, AVPlayerViewControllerDeleg
             }
         }
         return false
+    }
+
+    private func createMetadataItem(_ identifier: AVMetadataIdentifier,
+                                    value: Any) -> AVMetadataItem {
+        let item = AVMutableMetadataItem()
+        item.identifier = identifier
+        item.value = value as? NSCopying & NSObjectProtocol
+        // Specify "und" to indicate an undefined language.
+        item.extendedLanguageTag = "und"
+        return item.copy() as! AVMetadataItem
+    }
+
+    private func metadataItemForMediaContentRating(_ rating: String) -> AVMetadataItem {
+        return createMetadataItem(.iTunesMetadataContentRating, value: rating)
     }
 
     // MARK: - AVPlayerViewControllerDelegate
